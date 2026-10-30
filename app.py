@@ -34,5 +34,7 @@ if prompt:
 
     response = model.invoke(st.session_state.messages)
     st.session_state.messages.append(AIMessage(content=response.content))
+    print("You :", prompt)
+    print("Bot :", response.content)
     with st.chat_message("assistant"):
         st.write(response.content)
