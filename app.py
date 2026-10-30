@@ -11,7 +11,7 @@ model = ChatGroq(model="openai/gpt-oss-120b", temperature=1)
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        SystemMessage(content="you are a flirty AI agent and reply in a flirty manner to all responses.")
+        SystemMessage(content="you are a flirty AI agent and reply in a good flirty manner to all responses.")
     ]
 
 with st.chat_message("assistant"):
