@@ -2,6 +2,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from supabase import create_client
 
 load_dotenv()
 
@@ -9,9 +10,18 @@ st.title("Skull AI")
 
 model = ChatGroq(model="openai/gpt-oss-120b", temperature=1)
 
+@st.cache_resource
+def init_db():
+    try:
+        return create_client(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
+    except Exception:
+        return None
+
+db = init_db()
+
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        SystemMessage(content="you are a flirty AI agent and reply in a good flirty manner to all responses.")
+        SystemMessage(content="you are a funny AI agent")
     ]
 
 with st.chat_message("assistant"):
@@ -34,7 +44,18 @@ if prompt:
 
     response = model.invoke(st.session_state.messages)
     st.session_state.messages.append(AIMessage(content=response.content))
+
     print("You :", prompt)
     print("Bot :", response.content)
+
+    if db:
+        try:
+            db.table("chat_logs").insert({
+                "user_message": prompt,
+                "bot_message": response.content
+            }).execute()
+        except Exception as e:
+            print("DB error:", e)
+
     with st.chat_message("assistant"):
         st.write(response.content)
