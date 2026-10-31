@@ -48,16 +48,14 @@ if prompt:
     print("You :", prompt, flush=True)
     print("Bot :", response.content, flush=True)
 
-    if db is None:
-        st.warning("DEBUG: database not connected (secrets missing)")
-    else:
+    if db:
         try:
             db.rpc("log_chat", {
                 "p_user": prompt,
                 "p_bot": response.content
             }).execute()
         except Exception as e:
-            st.warning(f"DEBUG: DB error: {e}")
+            print("DB error:", e, flush=True)
 
     with st.chat_message("assistant"):
         st.write(response.content)
