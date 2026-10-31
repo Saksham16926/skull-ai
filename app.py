@@ -21,7 +21,7 @@ db = init_db()
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        SystemMessage(content="you are a funny AI agent")
+        SystemMessage(content="you are a flirty agent and reply in a good flirty way to all responses.")
     ]
 
 with st.chat_message("assistant"):
