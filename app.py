@@ -45,17 +45,19 @@ if prompt:
     response = model.invoke(st.session_state.messages)
     st.session_state.messages.append(AIMessage(content=response.content))
 
-    print("You :", prompt)
-    print("Bot :", response.content)
+    print("You :", prompt, flush=True)
+    print("Bot :", response.content, flush=True)
 
-    if db:
+    if db is None:
+        st.warning("DEBUG: database not connected (secrets missing)")
+    else:
         try:
-            db.table("chat_logs").insert({
-                "user_message": prompt,
-                "bot_message": response.content
+            db.rpc("log_chat", {
+                "p_user": prompt,
+                "p_bot": response.content
             }).execute()
         except Exception as e:
-            print("DB error:", e)
+            st.warning(f"DEBUG: DB error: {e}")
 
     with st.chat_message("assistant"):
         st.write(response.content)
